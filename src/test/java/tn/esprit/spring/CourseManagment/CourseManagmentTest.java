@@ -66,7 +66,7 @@ public class CourseManagmentTest {
     }
 }
 
-@SpringBootTest(classes = {GestionStationSkiApplication.class}) 
+@SpringBootTest(classes = {GestionStationSkiApplication.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 class CourseServicesImplJunitTest {
