@@ -13,7 +13,7 @@ services:
 
   devops-project:
     container_name: devops_project
-    image: medloukil/devops_project:0.0.1-SNAPSHOT
+    image: loukil/devops_project:0.0.1-SNAPSHOT
     depends_on:
       - mysqldb
     build: ./
