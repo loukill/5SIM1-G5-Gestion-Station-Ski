@@ -11,80 +11,64 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tn.esprit.spring.GestionStationSkiApplication;
 import tn.esprit.spring.entities.Course;
-import tn.esprit.spring.entities.Registration;
 import tn.esprit.spring.entities.Support;
 import tn.esprit.spring.entities.TypeCourse;
 import tn.esprit.spring.repositories.ICourseRepository;
-import tn.esprit.spring.repositories.IRegistrationRepository;
 import tn.esprit.spring.services.CourseServicesImpl;
 import tn.esprit.spring.services.ICourseServices;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)  // For unit tests with mocks
 public class CourseManagmentTest {
 
     @Mock
     ICourseRepository courseRepository;
 
-    @Mock
-    IRegistrationRepository registrationRepository;
-
     @InjectMocks
     CourseServicesImpl courseServices;
 
     Course course1 = new Course(12344555L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>());
-    List<Course> courseList = new ArrayList<Course>(){
-        {
-            add(new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>()));
-            add(new Course(13L, 2, TypeCourse.COLLECTIVE_CHILDREN, Support.SNOWBOARD, 200.0f, 3, new HashSet<>()));
-        }
-    };
 
     @Test
     void updateCourse() {
-
-        Course course =new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>());
+        // Test updating course price
+        Course course = new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>());
         course.setPrice(20.0f);
-        Mockito.when(courseRepository.save(Mockito.any())).thenReturn(course);
+        when(courseRepository.save(Mockito.any())).thenReturn(course);
 
         Course updatedCourse = courseServices.updateCourse(course);
-        Assertions.assertEquals(20.0f, updatedCourse.getPrice());
+        assertEquals(20.0f, updatedCourse.getPrice());
     }
 
     @Test
-    void addCouse(){
+    void addCourse() {
+        // Test adding course
         when(courseRepository.save(course1)).thenReturn(course1);
         Course course = courseServices.addCourse(course1);
         assertNotNull(course);
-
-
     }
+
     @Test
     void retrieveCourse() {
-        // Mock the behavior of the repository
+        // Test retrieving a course
         when(courseRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(course1));
 
-        // Call the method being tested
-        System.out.println("Before calling testRetrieveCourse()");
-        Course cr = courseServices.retrieveCourse(5L);
-        System.out.println("After calling testRetrieveCourse() => " + cr.getNumCourse());
-
-        // Assert the result
-        assertNotNull(cr);
+        Course retrievedCourse = courseServices.retrieveCourse(5L);
+        assertNotNull(retrievedCourse);
+        assertEquals(course1.getNumCourse(), retrievedCourse.getNumCourse());
     }
 }
 
-@SpringBootTest(classes = {GestionStationSkiApplication.class})
+@SpringBootTest(classes = {GestionStationSkiApplication.class})  // For Spring context tests
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith(SpringExtension.class)  // For Spring context tests
 class CourseServicesImplJunitTest {
 
     @Autowired
@@ -92,19 +76,19 @@ class CourseServicesImplJunitTest {
 
     @Test
     @Order(1)
-    void testRetrieveAllCourses(){
+    void testRetrieveAllCourses() {
+        // Test retrieving all courses
         List<Course> courseList = cr.retrieveAllCourses();
-        Assertions.assertNotNull(courseList);
+        assertNotNull(courseList);
+        Assertions.assertFalse(courseList.isEmpty());
     }
 
     @Test
     @Order(2)
-    void testRetreiveCourse() {
-        System.out.println("In the function");
+    void testRetrieveCourse() {
+        // Test retrieving a course by ID
         Course course = cr.retrieveCourse(1L);
-        Assertions.assertNotNull(course);
+        assertNotNull(course);
+        assertEquals(1L, course.getNumCourse());  // Assumed course ID for testing
     }
-
 }
-
-
