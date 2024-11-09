@@ -60,12 +60,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>5.7.0</version> <!-- Add a version here -->
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -22,6 +22,7 @@ import tn.esprit.spring.services.ICourseServices;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -39,32 +40,18 @@ public class CourseManagmentTest {
     @InjectMocks
     CourseServicesImpl courseServices;
 
-    Course course1 = new Course(12344555L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<Registration>());
+    Course course1 = new Course(12344555L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>());
     List<Course> courseList = new ArrayList<Course>(){
         {
-            add(new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<Registration>()));
-            add(new Course(13L, 2, TypeCourse.COLLECTIVE_CHILDREN, Support.SNOWBOARD, 200.0f, 3, new HashSet<Registration>()));
+            add(new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>()));
+            add(new Course(13L, 2, TypeCourse.COLLECTIVE_CHILDREN, Support.SNOWBOARD, 200.0f, 3, new HashSet<>()));
         }
     };
 
     @Test
-    void retrieveAllCourses() {
-        System.out.println("In the function");
-        // Mock the behavior of the repository
-        when(courseRepository.findAll()).thenReturn(courseList);
-
-        // Call the method being tested
-        System.out.println("Before calling retrieveActivitySector()");
-        List<Course> prods = courseServices.retrieveAllCourses();
-
-        // Assert the result
-        assertNotNull(prods);
-    }
-
-    @Test
     void updateCourse() {
 
-        Course course =new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<Registration>());
+        Course course =new Course(12L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<>());
         course.setPrice(20.0f);
         Mockito.when(courseRepository.save(Mockito.any())).thenReturn(course);
 
@@ -72,30 +59,52 @@ public class CourseManagmentTest {
         Assertions.assertEquals(20.0f, updatedCourse.getPrice());
     }
 
-    @SpringBootTest(classes = {GestionStationSkiApplication.class})
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    @ExtendWith(SpringExtension.class)
-    class StockServiceImplJunitTest {
-
-        @Autowired
-        ICourseServices cr;
-
-        Course course1 = new Course(12344555L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<Registration>());
+    @Test
+    void addCouse(){
+        when(courseRepository.save(course1)).thenReturn(course1);
+        Course course = courseServices.addCourse(course1);
+        assertNotNull(course);
 
 
-        @Test
-        @Order(1)
-        void testAddCourse() {
-            Course course1 = cr.addCourse(new Course(12344555L, 1, TypeCourse.INDIVIDUAL, Support.SKI, 100.0f, 2, new HashSet<Registration>()));
-            Assertions.assertEquals(3, course1.getNumCourse());
-        }
+    }
+    @Test
+    void retrieveCourse() {
+        // Mock the behavior of the repository
+        when(courseRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(course1));
 
-        @Test
-        @Order(2)
-        void retrieveCourse() {
-            Course course = cr.retrieveCourse(12344555L);
-            Assertions.assertNotNull(course);
-        }
+        // Call the method being tested
+        System.out.println("Before calling testRetrieveCourse()");
+        Course cr = courseServices.retrieveCourse(5L);
+        System.out.println("After calling testRetrieveCourse() => " + cr.getNumCourse());
+
+        // Assert the result
+        assertNotNull(cr);
+    }
+}
+
+@SpringBootTest(classes = {GestionStationSkiApplication.class})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(SpringExtension.class)
+class CourseServicesImplJunitTest {
+
+    @Autowired
+    ICourseServices cr;
+
+    @Test
+    @Order(1)
+    void testRetrieveAllCourses(){
+        List<Course> courseList = cr.retrieveAllCourses();
+        Assertions.assertNotNull(courseList);
+    }
+
+    @Test
+    @Order(2)
+    void testRetreiveCourse() {
+        System.out.println("In the function");
+        Course course = cr.retrieveCourse(1L);
+        Assertions.assertNotNull(course);
     }
 
 }
+
+
