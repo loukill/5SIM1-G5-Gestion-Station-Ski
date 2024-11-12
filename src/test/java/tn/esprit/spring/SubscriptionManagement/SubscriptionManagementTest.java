@@ -189,7 +189,7 @@ class SubscriptionServicesImplJUnitTest {
         // Act
         Set<Subscription> subscriptions = subscriptionServices.getSubscriptionByType(TypeSubscription.ANNUAL);
 
-        // Assert
+        // Asser
         assertNotNull(subscriptions);
         assertFalse(subscriptions.isEmpty());
     }
